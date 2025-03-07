@@ -4,7 +4,11 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 interface Article {
-  title: string;
+  title: {
+    en: string;
+    nus: string;
+    din: string;
+  };
   source: string;
   imageUrl: string;
   description: string;
@@ -17,7 +21,7 @@ export const sendNewPostNotification = functions.firestore
       const article = snapshot.data() as Article;
       const articleId = context.params.articleId;
 
-      if (!article.imageUrl || !article.title || !article.source) {
+      if (!article.imageUrl || !article.title || !article.source || !article.description) {
         throw new functions.https.HttpsError(
           "invalid-argument",
           "Missing required article fields"
@@ -27,7 +31,7 @@ export const sendNewPostNotification = functions.firestore
       // Construct FCM message
       const message: admin.messaging.Message = {
         data: {
-          title: article.title,
+          title: article.title.en,
           source: article.source,
           image: article.imageUrl,
           description: article.description,
