@@ -15,6 +15,7 @@ interface Article {
   category: string;
   url: string;
   publishedAt: string;
+  author: string;
   content: {
     en: string;
     nus: string;
@@ -44,7 +45,16 @@ export const sendNewPostNotification = functions.firestore
           imageUrl: String(article.imageUrl)
         },
         data: {
-          article: String(article),
+          id: String(snapshot.id),
+          title: String(article.title),
+          source: String(article.source),
+          description: String(article.description),
+          imageUrl: String(article.imageUrl),
+          content: String(article.content),
+          url: String(article.url),
+          publishedAt: String(article.publishedAt),
+          category: String(article.category),
+          author: String(article.author)
         },
         topic: "articles"
       };
