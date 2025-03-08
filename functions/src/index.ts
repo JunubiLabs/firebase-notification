@@ -12,6 +12,14 @@ interface Article {
   source: string;
   imageUrl: string;
   description: string;
+  category: string;
+  url: string;
+  publishedAt: string;
+  content: {
+    en: string;
+    nus: string;
+    din: string;
+  }
 }
 
 export const sendNewPostNotification = functions.firestore
@@ -19,7 +27,6 @@ export const sendNewPostNotification = functions.firestore
   .onCreate(async (snapshot, context) => {
     try {
       const article = snapshot.data() as Article;
-      const id = context.params.articleId;
 
       if (!article.imageUrl || !article.title || !article.source || !article.description) {
         throw new functions.https.HttpsError(
@@ -37,11 +44,7 @@ export const sendNewPostNotification = functions.firestore
           imageUrl: String(article.imageUrl)
         },
         data: {
-          articleId: String(id),
-          title: String(article.title.en),
-          source: String(article.source),
-          description: String(article.description),
-          imageUrl: String(article.imageUrl),
+          article: String(article),
         },
         topic: "articles"
       };
