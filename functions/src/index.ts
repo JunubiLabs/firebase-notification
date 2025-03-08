@@ -19,7 +19,7 @@ export const sendNewPostNotification = functions.firestore
   .onCreate(async (snapshot, context) => {
     try {
       const article = snapshot.data() as Article;
-      const articleId = context.params.articleId;
+      const id = context.params.articleId;
 
       if (!article.imageUrl || !article.title || !article.source || !article.description) {
         throw new functions.https.HttpsError(
@@ -28,16 +28,20 @@ export const sendNewPostNotification = functions.firestore
         );
       }
     
-      functions.logger.error("Article data:", article);
+      functions.logger.log("Article data:", article);
 
       const message: admin.messaging.Message = {
         notification: {
-          title: 'New Message',
-          body: 'Hello Subscribed Users!',
+          title: String(article.title.en),
+          body: String(article.description),
+          imageUrl: String(article.imageUrl)
         },
-        data: { // Optional custom data payload
-          key1: 'value1',
-          key2: 'value2',
+        data: {
+          articleId: String(id),
+          title: String(article.title.en),
+          source: String(article.source),
+          description: String(article.description),
+          imageUrl: String(article.imageUrl),
         },
         topic: "articles"
       };
