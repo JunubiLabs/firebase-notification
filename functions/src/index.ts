@@ -27,45 +27,30 @@ export const sendNewPostNotification = functions.firestore
           "Missing required article fields"
         );
       }
+    
+      functions.logger.error("Article data:", article);
 
-      // Construct FCM message
       const message: admin.messaging.Message = {
-        data: {
-          title: article.title.en,
-          source: article.source,
-          image: article.imageUrl,
-          description: article.description,
-          article_id: articleId,
-          click_action: "FLUTTER_NOTIFICATION_CLICK"
+        notification: {
+          title: 'New Message',
+          body: 'Hello Subscribed Users!',
         },
-        android: {
-          priority: "high",
-          notification: {
-            imageUrl: article.imageUrl
-          }
+        data: { // Optional custom data payload
+          key1: 'value1',
+          key2: 'value2',
         },
-        apns: {
-          payload: {
-            aps: {
-              "mutable-content": 1
-            }
-          },
-          fcmOptions: {
-            imageUrl: article.imageUrl
-          }
-        },
-        topic: "new_articles"
+        topic: "articles"
       };
-
+      
       // Send message
       const response = await admin.messaging().send(message);
       functions.logger.log("Notification sent successfully", response);
       return null;
     } catch (error) {
-      functions.logger.error("Error sending notification:", error);
+      functions.logger.error("Error sending notification:",error);
       throw new functions.https.HttpsError(
         "internal",
-        "Notification failed to send",
+        `Notification failed to send`,
         error
       );
     }
