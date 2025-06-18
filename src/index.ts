@@ -5,17 +5,18 @@ const app = express();
 app.use(express.json());
 
 app.post('/sendNotification', async (req, res) => {
-  const {  title, body, image } = req.body as {
+  const {  title, body, image, topic, fcmToken } = req.body as {
+    fcmToken: string;
+    topic: string;
     title: string;
     body: string;
     image: string;
   };
 
   try {
-    const payload = { title, body, image };
-    const topic = 'news_titles';
+    const payload = { title, body, image, topic, fcmToken };
 
-    const response = await sendNotification(payload, topic);
+    const response = await sendNotification(payload);
 
     console.log('Notification sent:', response);
     res.status(200).json({ message: 'Notification sent', id: response });

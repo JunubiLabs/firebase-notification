@@ -3,13 +3,14 @@ import {messaging} from "./firebase";
 interface NotificationPayload {
   title: string;
   body: string;
-  image: string,
+  image: string;
+  topic: string;
+  fcmToken?: string;
   data?: Record<string, string>;
 }
 
 export async function sendNotification(
   payload: NotificationPayload,
-  topic: string,
 ): Promise<string> {
 
   const message = {
@@ -36,7 +37,7 @@ export async function sendNotification(
         image: payload.image
       }
     },
-    topic: topic,
+    topic: payload.topic,
   };
 
   try {
